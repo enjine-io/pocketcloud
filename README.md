@@ -28,9 +28,17 @@ Light weight, user friendly Cloud Services built on PocketBase, NodeJS and PM2
 
 # Usage
 
-To access tha admin dashboard simply add the /_admin path in your browser address bar, for example - <br>
-     https://pocketcloud123-production.up.railway.app/_admin
+To access tha admin dashboard simply add the <b>/_admin path</b> in your browser address bar, for example: <br>
+     &nbsp;&nbsp; https://pocketcloud123-production.up.railway.app/_admin <br>
 <br>
+Use the Files tab in the Dashboard to edit the the home-page by right-clicking on this file: <br>
+     &nbsp;&nbsp; <b>/apps/public/index.html</b> <br>
+<br>
+To access tha demo REST API add the <b>/api/info</b> path in your browser address bar, for example: <br>
+   &nbsp;&nbsp; https://pocketcloud123-production.up.railway.app/api/info <br>
+<br>
+Use the Files tab in the Dashboard to edit the source code for this demo API by right-clicking on this file: <br>
+   &nbsp;&nbsp; <b>/apps/my-api/index.js</b> <br>
 <br>
 <br>
 Published by droidscript.org as part of the enjine-io multi-platform framework.<br>
