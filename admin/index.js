@@ -45,7 +45,7 @@ class Main extends App {
             this.adminKeyHint.setMargins(1, 0, 0, 0, "rem")
         }
 
-        this.adminKey = ui.addTextField(this.crd, "@@ADMIN_KEY@@", "Outlined", "calc(100% - 4rem)")
+        this.adminKey = ui.addTextField(this.crd, "@@ADMIN_KEY@@", "Outlined,Password", "calc(100% - 4rem)")
         this.adminKey.setMargins(2, 0, 2, 2, "rem")
         this.adminKey.label = "Admin key"
         this.adminKey.setEndAdornment("vpn_key", "icon")
