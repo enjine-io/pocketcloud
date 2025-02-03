@@ -254,7 +254,7 @@ let indexPath = adminPath+"/index.html"
 let mainPath = adminPath+"/main.js"
 const sessions = {}
 const generateSessionID = () => Math.random().toString(36).substring(2, 16)
-const sessionExpires = 5 * 24 * 60 * 60 * 1000
+const sessionExpires = 7 * 24 * 60 * 60 * 1000
 
 app.use(express.json())
 app.use(cookieParser())
@@ -269,26 +269,37 @@ if( DEBUG ) {
 }
 
 app.use((req, res, next) => {
-    const sessionID = req.cookies['sessionID']
-    let mainScript = ""
+    let sessionID = req.cookies['sessionID']
+    let mainScript = "", isSessionValid = false
     let isPasswordValid = validatePassword( process.env.ADMIN_KEY )
     if( !isPasswordValid ) {
         mainScript = login_main
         mainScript = mainScript.replace("@@ERROR_TEXT@@", "Update admin key and try again")
         mainScript = mainScript.replace("@@ADMIN_KEY_HINT@@", "true")
         mainScript = mainScript.replace("@@ADMIN_KEY@@", "")
+        isSessionValid = true
     }
-    else if( !sessionID ) {
+    else if(sessionID && sessions[sessionID]) {
+        const session = sessions[sessionID]
+        if(Date.now() - session.createdAt < sessionExpires && session.ADMIN_KEY == process.env.ADMIN_KEY) {
+            mainScript = home_main
+            mainScript = mainScript.replaceAll("@@ADMIN_KEY@@", process.env.ADMIN_KEY)
+            mainScript = mainScript.replaceAll("@@ADMIN_EMAIL@@", process.env.PB_ADMIN_EMAIL)
+            isSessionValid = true
+        }
+        else {
+            delete sessions[sessionID] // Remove expired session
+            res.clearCookie('sessionID')
+        }
+    }
+    
+    if( !isSessionValid ) {
         mainScript = login_main
         mainScript = mainScript.replace("@@ERROR_TEXT@@", "Enter admin key")
         mainScript = mainScript.replace("@@ADMIN_KEY_HINT@@", "false")
         mainScript = mainScript.replace("@@ADMIN_KEY@@", "")
     }
-    else {
-        mainScript = home_main
-        mainScript = mainScript.replaceAll("@@ADMIN_KEY@@", process.env.ADMIN_KEY)
-        mainScript = mainScript.replaceAll("@@ADMIN_EMAIL@@", process.env.PB_ADMIN_EMAIL)
-    }
+
     fs.writeFileSync(mainPath, mainScript)
     next()
 })
@@ -301,13 +312,17 @@ app.post("/login", (req, res) => {
         return res.json({ok: false, message: 'Invalid credentials'})
     }
     const sessionID = generateSessionID()
-    sessions[sessionID] = {sessionID, createdAt: Date.now()}
+    sessions[sessionID] = {
+        sessionID,
+        createdAt: Date.now(),
+        ADMIN_KEY: process.env.ADMIN_KEY
+    }
     res.cookie('sessionID', sessionID, {httpOnly: true, secure: true, maxAge: sessionExpires}) // Set secure: true in production
     res.json({ok: true, message: 'Login successful'})
 })
 app.post("/logout", (req, res) => {
     const sessionID = req.cookies['sessionID']
-    if (sessionID) delete sessions[sessionID]
+    if(sessionID && sessions[sessionID]) delete sessions[sessionID]
     res.clearCookie('sessionID')
     res.json({ok: true, message: 'Logged out successfully'})
 })
