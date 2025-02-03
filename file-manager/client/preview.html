@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <link rel="icon" type="image/x-icon" href="/_fs/assets/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>File Preview</title>
+        
+         <!-- Code Mirror -->
+        <link rel="stylesheet" href="/_fs/.edit/codemirror/codemirror.min.css" />
+        <link rel="stylesheet" href="/_fs/.edit/codemirror/ds-md-txt.css" />
+        <link rel="stylesheet" href="/_fs/.edit/codemirror/ds-md-javascript.css" />
+        <link rel="stylesheet" href="/_fs/.edit/codemirror/ds-md-py.css" />
+        <link rel="stylesheet" href="/_fs/.edit/codemirror/ds-md-css.css" />
+        <link rel="stylesheet" href="/_fs/.edit/codemirror/ds-md-html.css" />
+        <style>
+            #editor { background-color:black; width: 98%; height:98%; }
+            .cm-error-marker {
+                background-color: rgba(255, 0, 0,0.7);
+            }
+            .CodeMirror {
+                font-size: 14px;
+                height: 98% !important;
+                font-family: "Roboto Mono", monospace !important;
+                padding-top: 1em; 
+                margin-left: 1em; margin-right: 1em;
+            }
+        </style>
+        
+        <!-- Custom -->
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            html,
+            body,
+            iframe {
+                width: 100%;
+                height: 100%;
+            }
+
+            body {
+                margin: 0;
+                background-color: #222;
+                color: #bdc1c6;
+                font-family: Roboto, sans-serif;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+                line-height: 1.5;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            #loading-spinner {
+                width: 2em;
+                margin-bottom: 1em;
+            }
+
+            img,
+            audio,
+            video {
+                display: block;
+                max-width: 100%;
+                max-height: 100%;
+                margin: 0;
+            }
+
+            iframe {
+                border: none;
+                visibility: hidden;
+            }
+
+            iframe.loaded {
+                visibility: visible;
+            }
+
+            .tabs {
+                display: flex;
+            }
+
+            .tab {
+                cursor: pointer;
+                overflow-x: auto;
+                padding: 1em;
+                color: #aaa;
+            }
+
+            .fab {
+                position: fixed;
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                right: 64px;
+                bottom: 32px;
+                background-color: hsl(207deg 90% 54%);
+                background-repeat: no-repeat;
+                background-position: center;
+                border: none;
+                box-shadow: 0px 0px 3px 0px rgba(96, 125, 139, 0.35);
+                cursor: pointer;
+                transition: box-shadow 250ms;
+                z-index: 100;
+            }
+
+            .fab:hover {
+                box-shadow: 0px 0px 5px 2px rgba(96, 125, 139, 0.25);
+            }
+
+            .fab:active {
+                background-color: hsl(207deg, 70%, 48%);
+            }
+
+            .fab.icon-edit {
+                background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 0 24 24' width='24'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z'/%3E%3C/svg%3E");
+            }
+
+            .fab.icon-save {
+                background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 0 24 24' width='24'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z'/%3E%3C/svg%3E");
+            }
+
+            .fab.icon-preview {
+                background-color: hsl(291deg, 64%, 42%);
+                bottom: 110px;
+                background-image: url("data:image/svg+xml,%3Csvg%20width=%2224%22%20height=%2224%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d=%22M12%202c5.52%200%2010%204.48%2010%2010s-4.48%2010-10%2010S2%2017.52%202%2012%206.48%202%2012%202zM4%2012h4.4c3.407.022%204.922%201.73%204.543%205.127H9.488v2.47a8.004%208.004%200%200%200%2010.498-8.083C19.327%2012.504%2018.332%2013%2017%2013c-2.137%200-3.206-.916-3.206-2.75h-3.748c-.274-2.728.683-4.092%202.87-4.092%200-.975.327-1.597.811-1.97A8.004%208.004%200%200%200%204%2012z%22%20 fill='currentColor' /%3E%3C/svg%3E");
+            }
+
+            .fab.loading {
+                background-image: url("/_fs/assets/loading.svg");
+                background-blend-mode: difference;
+                pointer-events: none;
+            }
+
+            .tab.active {
+                border-bottom: #eee solid 1px;
+                background-color: #000;
+                color: #eee;
+            }
+
+            .tui-image-editor-container .tui-colorpicker-palette-hex {
+                color: #000;
+            }
+
+            .tui-image-editor-container .tui-image-editor-help-menu.left {
+                min-height: 506px;
+                height: unset !important;
+            }
+
+            .tui-image-editor-header-logo {
+                display: none;
+            }
+
+            .d2h-file-list-header {
+                color: #bdc1c6;
+            }
+
+            .d2h-cntx {
+                background-color: #f8fafd;
+            }
+
+            #preview {
+                overflow-y: auto;
+            }
+
+            #preview:not(:empty) ~ #loading-spinner,
+            #preview:not(:empty) ~ #file-name {
+                display: none;
+            }
+
+            .dialog {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 10;
+            }
+
+            .dialog[open] {
+                display: flex;
+            }
+
+            .dialog__content {
+                max-width: 65ch;
+                width: 100%;
+                height: 100%;
+                padding: 1em;
+                background: #222;
+                overflow-y: auto;
+            }
+
+            .dialog__close {
+                margin: 0;
+                position: absolute;
+                left: calc(50% + 28ch);
+                top: 1em;
+                font-weight: bold;
+                cursor: pointer;
+                background: #000;
+                width: 24px;
+                height: 24px;
+                text-align: center;
+                border-radius: 100%;
+                font-size: 1rem;
+                color: #CCC;
+            }
+
+            /* Touch screens */
+            @media (pointer: coarse) {
+                #editor {
+                    font-family: sans-serif !important;
+                }
+            }
+
+            @media screen and (max-width: 720px) {
+                .fab {
+                    right: 1em;
+                    bottom: 1em;
+                }
+            }
+
+            @media screen and (max-width: 480px) {
+                .fab {
+                    /*display: none;*/
+                    right: 1em;
+                    bottom: 1em;
+                }
+            }
+        </style>
+    </head>
+    <body>
+    
+        <div id="preview"></div>
+
+        <img src="/_fs/assets/loading.svg" id="loading-spinner" />
+        <p id="file-name"></p>
+
+        <div class="dialog">
+            <p class="dialog__close">&times;</p>
+            <div class="dialog__content"></div>
+        </div>
+
+        <script>
+            const previewEl = document.getElementById("preview");
+            const fileNameEl = document.getElementById("file-name");
+            const IS_RAILWAY = true;
+
+            function getRoute(path = "") {
+                if( IS_RAILWAY ) {
+                    if( path.startsWith("/") ) return "/_fs"+path
+                    return "_fs/"+path
+                }
+                return path
+            }
+
+            // http://ip:port?file=http://ip:port?file=/sdcard/file.txt
+            const [ url, secondUrl ] = new URL(location.href).searchParams.getAll("file").map(file => atob(decodeURI(file)));
+            const [ file, secondFile ] = [url, secondUrl].filter(url => !!url).map(url => new URL(url).searchParams.get("file"));
+            const ext = file.slice(file.lastIndexOf(".") + 1).toLowerCase();
+
+            document.title = `${file.split("/").pop()} | Preview`;
+            fileNameEl.innerText = secondFile ? `${file} - ${secondFile}` : file;
+
+            const IMAGE = /png|jpg|jpeg|jfif|pjpeg|pjp|svg|gif|webp|ico|avif|apng/;
+            const AUDIO = /mp3|flac|m4a|ogg|3gp/;
+            const VIDEO = /mp4|webm|ogg/;
+            const ZIP_FILE = /apk|zip|spk|ppk|epk/;
+
+            const CODE = /html?|css|js|json|xml|py|csv|txt/;
+
+            const OFFICE_TABLE = /xls|xlsx/;
+
+            let snippet = "";
+            let workbook, dataGrid;
+
+            switch (true) {
+                case !!secondFile:
+                    loadScript("libs/file-diff/diff.min.js")
+                        .then(() => loadScript("libs/file-diff/diff2html.min.js"))
+                        .then(() => loadStyle("libs/file-diff/diff2html.min.css"))
+                        .then(initDiffViewer);
+                    break;
+                case IMAGE.test(ext):
+                    snippet = `<img src="${url}" alt="" role="presentation" />`;
+
+                    const fab = document.createElement("button");
+                    fab.className = "fab icon-edit";
+                    fab.onclick = () => {
+                        previewEl.innerHTML = "";
+                        fab.remove();
+
+                        loadScript("libs/tui-image-editor/black-theme.js")
+                            .then(() => loadScript("libs/tui-image-editor/tui-color-picker.min.js"))
+                            .then(() => loadStyle("libs/tui-image-editor/tui-color-picker.min.css"))
+                            .then(() => loadStyle("libs/tui-image-editor/tui-image-editor.min.css"))
+                            .then(() => loadScript("libs/tui-image-editor/tui-image-editor.min.js"))
+                            .then(initImageEditor);
+                    }
+
+                    document.body.appendChild(fab);
+                    break;
+                case CODE.test(ext):
+                    if( window.useAce ) { 
+                        snippet = '<div id="editor" style="width: 100%;height: 100%"></div>';
+                        loadScript("/.edit/androidscript-ace/src-min/ace.js").then(initEditor);
+                    }
+                    else { 
+                        snippet = '<textarea id="editor" style="width: 100%;height: 100%"></textarea>';
+                        loadScript("/.edit/codemirror/codemirror.min.js")
+                            .then(() => loadScript("/.edit/codemirror/javascript.min.js"))
+                            .then(() => loadScript("/.edit/codemirror/python.js"))
+                            .then(() => loadScript("/.edit/codemirror/css.js"))
+                            .then(() => loadScript("/.edit/codemirror/htmlmixed.js"))
+                            .then(initEditor);
+                    }
+                    break;
+                case /(?:md|markdown)$/.test(ext):
+                    if( window.useAce ) { 
+                        snippet = '<div id="editor" style="width: 100%;height: 100%"></div>';
+                        loadScript("libs/marked.min.js")
+                            .then( () => loadScript("/.edit/androidscript-ace/src-min/ace.js") )
+                            .then(initMarkdownEditor);
+                    }
+                    else { 
+                        snippet = '<textarea id="editor" style="width: 100%;height: 100%"></textarea>';
+                        loadScript("libs/marked.min.js")
+                            .then(() => loadScript("/.edit/codemirror/codemirror.min.js"))
+                            .then(initMarkdownEditor);
+                    }
+                    break;
+                case AUDIO.test(ext):
+                    snippet = `<audio src="${url}" controls></audio>`;
+                    break;
+                case VIDEO.test(ext):
+                    snippet = `<video src="${url}" controls></video>`;
+                    break;
+                case ZIP_FILE.test(ext):
+                    snippet = `<iframe
+                        style="display: block"
+                        onload="showFileManagerInPreviewMode()"
+                        src="${location.origin}/Extensions/FileManager/Left/FileManager.html"></iframe>`
+                    break;
+                case OFFICE_TABLE.test(ext):
+                    loadScript("libs/xlsx.full.min.js")
+                        .then(() => loadScript("libs/canvas-datagrid.js"))
+                        .then(parseSheet);
+                    break;
+                case ext === "docx":
+                    loadScript("libs/mammoth.browser.min.js").then(parseDocx);
+                    break;
+                case ext === "odt":
+                case ext === "ods":
+                case ext === "odp":
+                case ext === "pdf":
+                    snippet = `<iframe onload="this.classList.add('loaded')" src="_fs/libs/viewerjs-0.5.8/ViewerJS/#${url}" />`;
+                    previewEl.style.cssText = "width: 100%;height: 100%";
+                    break;
+                default:
+                    snippet = "No preview available";
+            }
+
+            previewEl.innerHTML = snippet;
+
+            function beforeUnloadListener(ev) {
+                ev.preventDefault();
+                return ev.returnValue = "You have unsaved changes.\nAre you sure you want to exit?";
+            }
+
+            async function initMarkdownEditor() {
+                const editor = await initEditor();
+
+                const dialog = document.querySelector(".dialog");
+                const dialogContent = document.querySelector(".dialog__content");
+                const dialogCloseEl = document.querySelector(".dialog__close");
+                const closeDialog = () => dialog.removeAttribute("open");
+
+                dialogCloseEl.onclick = closeDialog;
+
+                document.body.addEventListener("keydown", ev => {
+                    if(ev.key === "Escape") closeDialog();
+                });
+
+                dialog.onclick = ev => {
+                    if(ev.target === dialog) closeDialog();
+                };
+
+                const openPreviewDialog = () => {
+                    dialogContent.innerHTML = marked.parse(editor.getValue());
+                    dialog.setAttribute("open", "");
+                };
+
+                const previewFab = document.createElement("button");
+                previewFab.className = "fab icon-preview";
+                previewFab.onclick = openPreviewDialog;
+                document.body.appendChild(previewFab); 
+            }
+
+            async function initDiffViewer() {
+                let reqs;
+
+                try {
+                    reqs = await Promise.all([
+                        fetch(url).then(res => res.text()),
+                        fetch(secondUrl).then(res => res.text())
+                    ]);
+                } catch(err) {
+                    console.error(err);
+                    alert(err.toString());
+                    return;
+                }
+
+                document.body.style.overflow = "unset";
+                document.body.style.color = "unset";
+                previewEl.style.cssText = "width: 100%;height: 100%;padding: 1em;max-width: 1450px;overflow: unset";
+
+                const [oldText, newText] = reqs;
+                const [oldFileName, newFileName] = [file, secondFile].map(file => file.split("/").pop());
+
+                const diff = Diff.createTwoFilesPatch(oldFileName, newFileName, oldText, newText);
+                previewEl.innerHTML = Diff2Html.html(diff, {
+                    drawFileList: true,
+                    matching: "lines",
+                    outputFormat: "side-by-side",
+                });
+            }
+
+            function initImageEditor() {
+                previewEl.style.cssText = "width: 100%;height: 100%";
+                previewEl.innerHTML = '<div id="tui-image-editor"></div>';
+
+                const imageEditor = new tui.ImageEditor(document.querySelector("#tui-image-editor"), {
+                    cssMaxWidth: window.innerWidth,
+                    cssMaxHeight: window.innerHeight,
+                    usageStatistics: false,
+                    hideLoadBtn: true,
+                    hideLOadButton: true,
+                    includeUI: {
+                        theme: blackTheme,
+                        loadImage: {
+                            path: url,
+                            name: file.split("/").pop().split(".").shift(),
+                        },
+                        menuBarPosition: "right"
+                    }
+                });
+
+                window.onresize = () => imageEditor.ui.resizeEditor();
+            }
+
+            async function initEditor() {
+                previewEl.style.cssText = "width: 100%;height: 100%";
+
+                let language = "javascript";
+                let mode = "javascript"
+                switch(ext) {
+                    case "js": language = "javascript";  mode = "javascript"; break;
+                    case "txt": language = "txt"; mode="javascript";  break;
+                    case "py": language = "python"; mode="python"; break;
+                    case "html":
+                    case "htm": language = "html"; mode="javascript";  break;
+                    case "css": language = ext; mode="css"; break;
+                    case "xml":
+                    case "json": language = ext; mode="javascript"; break;
+                }
+
+                var editor = null
+                if( window.useAce ) {
+                    ace.config.setModuleUrl("ace/mode/python", "/_fs/assets/mode-python.js");
+    
+                    editor = ace.edit("editor");
+                    editor.setReadOnly(true);
+                    editor.setTheme("ace/theme/dark");
+                    editor.session.setUseWorker(false);
+                    editor.session.setMode(`ace/mode/${language}`);
+                    editor.$blockScrolling = Infinity;
+                    editor.setFontSize(screen.width >= 425 ? 15 : 12);
+                } 
+                else {
+                    editor = CodeMirror.fromTextArea(document.querySelector("#editor"), {
+                        mode: mode,
+                        theme: "ds-md-"+(ext.startsWith("js")?"javascript":ext),
+                        lineNumbers: true,
+                        autoRefresh: true,
+                        readOnly: true,
+                        //extraKeys: { "Ctrl-S": (instance)=> { Save() }, "Cmd-S": (instance)=> { Save() } }
+                    })
+                    //editor.on('change', (args) => { onCodeChanged() } )
+                }
+
+                const req = await fetch(url);
+                const code = await req.text();
+
+                editor.setValue(code, -1);
+                if( !window.useAce ) editor.scrollIntoView( { line:0, ch:0 } )
+
+                const fab = document.createElement("button");
+                fab.className = "fab icon-edit";
+                fab.onclick = () => {
+                    const currentIcon = fab.classList.contains("icon-edit") ? "edit" : "save";
+                    if(currentIcon === "edit" && window.top === window.self) {
+                        setTimeout(() => {
+                            window.addEventListener("beforeunload", beforeUnloadListener);
+                        }, 0);
+                    }
+
+                    pen_OnClick(currentIcon, editor, fab);
+                }
+
+                document.body.appendChild(fab);
+
+                if(language === "html") {
+                    var previewURL = `http://${location.hostname}:8015/${file.replace(/\/storage\/emulated\/\d\//, "")}`;
+                    previewURL = previewURL.replace( "Android/data/com.smartphoneremote.androidscriptfree/files/", "" )
+                    fetch(previewURL)
+                        .then(res => {
+                            if(!res.ok) return;
+    
+                            const previewHtml = document.createElement("button"); 
+                            previewHtml.className = "fab icon-preview";
+                            previewHtml.onclick = () => window.open(previewURL);
+                            document.body.appendChild(previewHtml); 
+                        });
+                }
+
+                return editor;
+            }
+
+            async function pen_OnClick(currentIcon, editor, fab) {
+                let isReadOnly = true;
+                let icon = "edit";
+                let isErrorOccured = false;
+
+                if(currentIcon === "edit") {
+                    isReadOnly = false;
+                    icon = "save";
+                } else {
+                    fab.classList.add("loading");
+
+                    try {
+                        const req = await fetch(`${new URL(url).origin}${getRoute("/action")}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                type: "write",
+                                file: file,
+                                text: editor.getValue()
+                            })
+                        });
+
+                        const res = await req.json();
+
+                        if(!res.status) throw res.message;
+                    } catch(err) {
+                        isErrorOccured = true;
+                        console.error(err);
+                        alert(err);
+                    }
+
+                    fab.classList.remove("loading");
+                }
+
+                // Do not change the save icon if there is an error.
+                if(!isErrorOccured) {
+                    window.removeEventListener("beforeunload", beforeUnloadListener);
+                    window.parent.postMessage(`mode-${isReadOnly ? "preview" : "edit"}`, "*");
+                    fab.classList.replace(`icon-${currentIcon}`, `icon-${icon}`);
+                    if( window.useAce ) editor.setReadOnly(isReadOnly);
+                    else editor.setOption( "readOnly", false )
+                    editor.focus();
+                }
+
+                return isErrorOccured;
+            }
+
+            async function parseDocx() {
+                const req = await fetch(url);
+                const arrayBuffer = await req.arrayBuffer();
+                mammoth
+                    .convertToHtml({ arrayBuffer })
+                    .then((res) => {
+                    document.body.style.justifyContent = "flex-start";
+                    previewEl.style.cssText = "width: min(90%, 65ch); padding: 1em;";
+                    previewEl.innerHTML = res.value;
+                })
+                    .done();
+            }
+
+            async function parseSheet() {
+                const req = await fetch(url);
+                const arrayBuffer = await req.arrayBuffer();
+
+                workbook = XLSX.read(arrayBuffer);
+
+                createSheetTabs();
+
+                document.body.style.justifyContent = "flex-start";
+                document.body.style.alignItems = "flex-start";
+
+                dataGrid = canvasDatagrid({
+                    parentNode: previewEl,
+                    editable: false,
+                    data: XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 }),
+                });
+
+                previewEl.style.cssText = "width: 100%;height: 100%";
+                dataGrid.style.filter = "invert(1)";
+                dataGrid.style.width = "100%";
+                dataGrid.style.height = "100%";
+
+                window.onresize = () => dataGrid.refresh();
+            }
+
+            // For xlsx sheet names.
+            function createSheetTabs() {
+                const tabsEl = document.createElement("div");
+                tabsEl.className = "tabs";
+
+                for (const sheetName of workbook.SheetNames) {
+                    const tab = document.createElement("div");
+                    tab.className = "tab";
+                    tab.innerText = sheetName;
+                    tab.onclick = () => {
+                        if(tab.classList.contains("active")) return;
+
+                        document.querySelector(".tab.active").classList.remove("active");
+                        tab.classList.add("active");
+
+                        dataGrid.data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+                    };
+                    tabsEl.appendChild(tab);
+                }
+
+                tabsEl.firstElementChild.classList.add("active");
+                document.body.prepend(tabsEl);
+            }
+
+            async function showFileManagerInPreviewMode() {
+                previewEl.style.cssText = "width: 100%;height: 100%";
+                const frame = previewEl.firstElementChild;
+                const frameWin = frame.contentWindow;
+                const frameDoc = frame.contentDocument;
+                const toBeDeleted = "#toolbar-delete,#toolbar-upload,#view-mode-btn,#sort-btn,#help-btn";
+
+                // Some styles.
+                frameDoc.head.insertAdjacentHTML("beforeend", `<style>
+                .breadcrumbs > .breadcrumb:empty + .breadcrumb > .material-icons {
+                    display: none;
+                }
+            </style>`);
+
+                // Change events / variables
+                frameWin.ext.serverIP = location.hostname;
+                frameWin.initSpecialFolders = () => {};
+                frameWin.ext_OnReady();
+
+                // remove some elements.
+                frameDoc.querySelectorAll(toBeDeleted).forEach(el => el.remove());
+                frameWin.eval("infoBox").remove();
+
+                const contextMenuEl = frameWin.eval("uiUtils").contextMenuEl;
+                Array.from(contextMenuEl.querySelectorAll("li")).forEach(li => {
+                    const text = li.querySelector(".mdc-list-item__text");
+
+                    if(text && !/Preview|Download/.test(text.textContent)) li.remove();
+                    else if(li.matches(".mdc-list-divider")) li.remove();
+                });
+
+                // Show file manager
+                frame.style.visibility = "visible";
+
+                // Unzip.
+                const extractPath = await unzipFile();
+                const fileName = file.split(/(?:\/|\\)/).pop();
+
+                // Build file paths.
+                const firstBreadCrumb = frameWin.eval("uiUtils").breadcrumbs.firstElementChild;
+                firstBreadCrumb.innerHTML = "";
+
+                frameWin.eval("specialFolders")[0] = {
+                    filename: fileName,
+                    icon: "sd_card",
+                    absolutePath: extractPath,
+                    isFolder: true
+                };
+
+                // Goto unzipped folder
+                frameWin.goToFolder(extractPath);
+            }
+
+            /* Helper functions */
+
+            async function unzipFile() {
+                const unzipReq = await fetch(`${new URL(url).origin}${getRoute("/action")}`, {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({
+                        type: "unzip",
+                        extractToTempFolder: true,
+                        file,
+                    }),
+                });
+
+                if(!unzipReq.ok) {
+                    console.log(unzipReq.status, unzipReq.statusText)
+                    unzipReq.text().then(console.log);
+                    return alert("An error has occurred. See the developer console for more information.");
+                }
+
+                const unzipRes = await unzipReq.json();
+
+                if(!unzipRes.status) {
+                    console.log(unzipRes);
+                    return alert("An error has occurred. See the developer console for more information.");
+                }
+
+                return unzipRes.data.outputFilePath;
+            }
+
+            function saveAs(blob, filename) {
+                const anchor = document.createElement("a");
+                anchor.href = URL.createObjectURL(blob);
+                anchor.download = filename;
+
+                document.body.appendChild(anchor);
+                anchor.click();
+
+                anchor.remove();
+                URL.revokeObjectURL(blob);
+            }
+
+            function loadScript(url) {
+                url = getRoute( url )
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement("script");
+                    script.src = url;
+                    script.onload = resolve;
+                    script.onunload = reject;
+                    document.head.appendChild(script);
+                });
+            }
+
+            function loadStyle(url) {
+                url = getRoute( url )
+                return new Promise((resolve, reject) => {
+                    const link = document.createElement("link");
+                    link.href = url;
+                    link.rel = "stylesheet";
+                    link.onload = resolve;
+                    link.onunload = reject;
+                    document.head.appendChild(link);
+                });
+            }
+        </script>
+    </body>
+</html>

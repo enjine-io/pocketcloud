@@ -1,0 +1,45 @@
+
+[data-bs-theme=dark],body[data-bs-theme=dark] [data-bs-theme=light] {
+    --tblr-body-bg: #1c1c1c;
+    --tblr-dark: #232323;
+    --tblr-bg-surface: #34373b;
+    --tblr-dark-rgb: 35,35,35;
+    --tblr-secondary-rgb: 42,42,44;
+    --tblr-secondary: #ffffff;
+    --tblr-danger: #4c4f53;
+    --tblr-dark-mode-border-color: #414344;
+    --tblr-border-radius: 6px;
+}
+
+.btn { 
+    background-color: #35373b;
+}
+
+.btn:hover {
+    background-color: #595c62;
+}
+
+.navbar-brand {
+    color: #cacaca;
+}
+
+ul.nav.bg-dark {
+    background: #2c2e31 !important;
+}
+
+.nav-link {
+    color: #a9abae;
+}
+
+.nav-link:focus, .nav-link:hover {
+    color: #a8a8a8;
+}
+
+.nav-link:focus, .nav-link.active {
+    color: #ffffff;
+}
+
+.container-xl {
+    margin-left: inherit;
+    max-width: 99%;
+}

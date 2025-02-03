@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+    <meta charset="UTF-8">
+
+    <link rel="icon" href="/_admin/assets/favicon.png" type="image/png">
+
+    <title>PocketCloud Admin Dashboard</title>
+
+    <script>_hybrid=false</script>
+
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/material-ui.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/material-ui-lab.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/swipeable-views.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/material-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/fonts.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/moment.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/rome.standalone.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/material-datetime-picker.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/material-datetime-picker.css">
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/date-time-picker/js/draggabilly.pkgd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/date-time-picker/js/datetimepicker.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/obj.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/enjine-ui.js"></script>
+   
+    <script src="/_admin/main.js"></script>
+
+    <style>
+        .admin-logs-container {
+            color: #d4d4d4;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow: auto;
+            padding: 1rem;
+            font-size: 12;
+            line-height: 1.5;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            overflow: auto;
+            padding-bottom: 3rem;
+            margin-bottom: 4rem;
+            width: 100%;
+            justify-content: flext-start;
+            align-items: flex-start;
+        }
+        .admin-refresh-icon-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 8px;
+            z-index: 200;
+        }
+    </style>
+</head>
+
+<body onload="if( typeof onStart=='function' ) onStart(); else main = new Main()">
+
+    <link id="_id_theme" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/dark.css">
+    <link rel="stylesheet" id="_id_picker_theme" href="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/date-time-picker/css/dark.css">
+    <link rel="stylesheet" id="_id_dtpicker_theme" href="https://cdn.jsdelivr.net/gh/enjine-io/ui@main/libs/material-datetime-picker-dark.css">
+     <style>.uiTabPanel { height:100%; }</style>
+    
+    <div id="root"> </div>
+    <div id="popups"> </div>
+    <div id="drawer"> </div>
+</body>
+
+</html>

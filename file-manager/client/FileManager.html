@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/x-icon" href="_fs/assets/favicon.ico">
+        <link rel="apple-touch-icon" href="_fs/assets/apple-touch-icon.png">
+        <title>File Manager</title>
+        <!-- Material -->
+        <link rel="stylesheet" href="/_fs/.edit/material/material-components.min.css" />
+        <link rel="stylesheet" href="/_fs/.edit/material/material-icons.css" />
+        <link rel="stylesheet" href="/_fs/.edit/material/roboto.css" />
+        <!-- Custom -->
+        <link rel="stylesheet" href="_fs/base.css" />
+    </head>
+    <body class="mdc-theme--background">
+        <header class="mdc-top-app-bar mdc-top-app-bar--dense toolbar" data-mdc-auto-init="MDCTopAppBar">
+            <div class="mdc-top-app-bar__row">
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                    <div class="breadcrumbs">
+                        <div class="breadcrumb">
+                            <button class="mdc-button">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="mdc-button__label">My Files</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mdc-top-app-bar__file-select mdc-theme--background">
+                        <p>
+                            <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" id="cancel-selection-btn" title="Cancel selection">check_circle</button>
+                            <span class="toolbar-select-text mdc-typography--body1">0 item selected</span>
+                        </p>
+                    </div>
+                </section>
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" style="pointer-events: none">
+                    <div class="file-search">
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" title="Search" id="toolbar-search">search</button>
+                        <input type="search" placeholder="Search" class="file-search__input" />
+                    </div>
+                    <div class="mdc-top-app-bar__file-tools">
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" title="Download" id="toolbar-download">file_download</button>
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" title="Delete" id="toolbar-delete">delete</button>
+                    </div>
+                    <div class="always-visible">
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" id="toolbar-upload" title="Upload Files" disabled>file_upload</button>
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" id="toolbar-refresh" title="Refresh" disabled>refresh</button>
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" id="view-mode-btn" title="Switch to list view">view_list</button>
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" id="toolbar-info" title="View details">info</button>
+                    </div>
+
+                    <div class="mdc-menu-surface--anchor">
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" id="sort-btn" title="Sort options">sort_by_alpha</button>
+                        <div id="sort-menu" class="mdc-menu mdc-menu-surface" data-mdc-auto-init="MDCMenu">
+                            <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+                                <li class="mdc-list-item" role="menuitem">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__graphic">
+                                        <div class="mdc-radio">
+                                            <input class="mdc-radio__native-control" type="radio" name="sort-item" value="Name" />
+                                            <div class="mdc-radio__background">
+                                                <div class="mdc-radio__outer-circle"></div>
+                                                <div class="mdc-radio__inner-circle"></div>
+                                            </div>
+                                        </div>
+                                    </span>
+                                    <span class="mdc-list-item__text">Name</span>
+                                </li>
+                                <li class="mdc-list-item" role="menuitem">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__graphic">
+                                        <div class="mdc-radio">
+                                            <input class="mdc-radio__native-control" type="radio" name="sort-item" value="Date" />
+                                            <div class="mdc-radio__background">
+                                                <div class="mdc-radio__outer-circle"></div>
+                                                <div class="mdc-radio__inner-circle"></div>
+                                            </div>
+                                        </div>
+                                    </span>
+                                    <span class="mdc-list-item__text">Date</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mdc-menu-surface--anchor">
+                        <button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary" id="help-btn" title="More...">more_vert</button>
+                        <div id="help-menu" class="mdc-menu mdc-menu-surface" data-mdc-auto-init="MDCMenu">
+                            <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+                                <li class="mdc-list-item" role="menuitem">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">Keyboard shortcuts</span>
+                                </li>
+                                <li class="mdc-list-item" role="menuitem">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">Show hidden files</span>
+                                    <span class="mdc-list-item__meta mdc-touch-target-wrapper">
+                                        <div class="mdc-checkbox mdc-checkbox--touch">
+                                            <input type="checkbox" class="mdc-checkbox__native-control" id="chk-show-hidden-files" />
+                                            <div class="mdc-checkbox__background">
+                                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                </svg>
+                                                <div class="mdc-checkbox__mixedmark"></div>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </header>
+
+        <main class="mdc-top-app-bar--dense-fixed-adjust">
+            <div class="file-container__list-header mdc-typography--body2 color-secondary">
+                <p class="file-container__list-header__item name">Name<span class="material-icons"></span></p>
+                <p class="file-container__list-header__item date"><span class="material-icons"></span>Date modified</p>
+            </div>
+
+            <div class="scrollable-area" id="drop-area">
+                <img src="_fs/assets/loading.svg" class="visible" id="loading-spinner" />
+
+                <h6 class="mdc-typography--subtitle1 color-secondary fw-bold container-title container-title--folders">Folders</h6>
+                <ul class="mdc-image-list file-container" id="folder-container">
+                    <!-- Auto Fill -->
+                </ul>
+
+                <h6 class="mdc-typography--subtitle1 color-secondary fw-bold container-title container-title--files">Files</h6>
+                <ul class="mdc-image-list file-container" id="file-container">
+                    <!-- Auto Fill -->
+                </ul>
+
+                <div class="info-box">
+                    <span class="material-icons">info</span>
+                    <p class="mdc-typography--body1"></p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Detail Panel -->
+        <aside class="details-panel details-panel--no-select mdc-top-app-bar--dense-fixed-adjust">
+            <h5 class="details-panel__title mdc-typography--headline5">General info</h5>
+
+            <div class="details-panel__preview"></div>
+
+            <div class="details-panel__info">
+                <p class="mdc-typography--body2 color-secondary"><strong>Size</strong></p>
+                <span class="details-panel__size mdc-typography--body1"></span>
+
+                <p class="mdc-typography--body2 color-secondary"><strong>Date modified</strong></p>
+                <span class="details-panel__modified mdc-typography--body1"></span>
+
+                <p class="mdc-typography--body2 color-secondary"><strong>Path</strong></p>
+                <span class="details-panel__path mdc-typography--body1"></span>
+                <span class="material-icons copy-path" tabindex="0" title="Copy Path">content_copy</span>
+            </div>
+
+            <div class="details-panel__no-select color-secondary">
+                <p class="material-icons">info</p>
+                <p class="details-panel__title mdc-typography--body">Select an item to see details</p>
+            </div>
+        </aside>
+        <!-- /Detail Panel -->
+
+        <!-- Offline Overlay -->
+        <div id="offline-overlay">
+            <h3 class="offline-overlay-icon material-icons">wifi_off</h3>
+            <h4 class="details-panel__title mdc-typography--headline4 offline-overlay-title">Device not connected</h4>
+            <button class="mdc-button mdc-button--raised mdc-button--icon-leading offline-overlay-button">
+                <span class="mdc-button__ripple"></span>
+                <span class="mdc-button__focus-ring"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+                <span class="mdc-button__label">Reload</span>
+            </button>
+        </div>
+        <!-- Offline Overlay -->
+
+        <!-- Context Menus -->
+        <div class="mdc-menu mdc-menu-surface context-menu" data-mdc-auto-init="MDCMenu">
+            <ul class="mdc-list mdc-list--dense" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+                <li class="mdc-list-item hide-on--main-tag" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">content_cut</span>
+                    <span class="mdc-list-item__text">Cut</span>
+                </li>
+                <li class="mdc-list-item hide-on--main-tag" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">content_copy</span>
+                    <span class="mdc-list-item__text">Copy</span>
+                </li>
+                <li class="mdc-list-item enable-on--paste" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">content_paste</span>
+                    <span class="mdc-list-item__text">Paste</span>
+                </li>
+
+                <li class="mdc-list-divider hide-on--main-tag" role="separator"></li>
+
+                <li class="mdc-list-item hide-on--main-tag" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">delete</span>
+                    <span class="mdc-list-item__text">Delete</span>
+                </li>
+                <li class="mdc-list-item hide-on--main-tag" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">drive_file_rename_outline</span>
+                    <span class="mdc-list-item__text">Rename</span>
+                </li>
+                <li class="mdc-list-item hide-on--main-tag" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                            <path
+                                  fill="currentColor"
+                                  d="M15 3a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5c0-1.1.9-2 2-2zM8 5H5v10h10V5h-5v2H8V5zm4 6v2h-2v-2h2zm-2-2v2H8V9h2zm2-2v2h-2V7h2z">
+                            </path>
+                        </svg>
+                    </span>
+                    <span class="mdc-list-item__text">Zip selection</span>
+                </li>
+                <li class="mdc-list-item hide-on--main-tag show-on--zip-file" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">unarchive</span>
+                    <span class="mdc-list-item__text">Extract all</span>
+                </li>
+
+                <li class="mdc-list-item hide-on--main-tag" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">filter_2</span>
+                    <span class="mdc-list-item__text">Duplicate</span>
+                </li>
+                <li class="mdc-list-item hide-on--main-tag show-on--text-files" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">compare_arrows</span>
+                    <span class="mdc-list-item__text">Compare</span>
+                </li>
+                <li class="mdc-list-item hide-on--main-tag" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">file_download</span>
+                    <span class="mdc-list-item__text">Download</span>
+                </li>
+
+                <li class="mdc-list-divider" role="separator"></li>
+
+                <li class="mdc-list-item show-on--file show-on--ds-packages" role="menuitem" style="display: none">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">build</span>
+                    <span class="mdc-list-item__text">Install</span>
+                </li>
+                <li class="mdc-list-item show-on--file" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">visibility</span>
+                    <span class="mdc-list-item__text">Preview</span>
+                </li>
+                <li class="mdc-list-item hide-on--main-tag hide--pin" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">add_location</span>
+                    <span class="mdc-list-item__text">Pin to My Files</span>
+                </li>
+                <li class="mdc-list-item" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">insert_drive_file</span>
+                    <span class="mdc-list-item__text">New file</span>
+                </li>
+                <li class="mdc-list-item" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__graphic material-icons">create_new_folder</span>
+                    <span class="mdc-list-item__text">New folder</span>
+                </li>
+
+                <li class="mdc-list-item mdc-list-item--disabled show-on--welcome show-on--empty" role="menuitem">
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__text">No action</span>
+                </li>
+            </ul>
+        </div>
+        <!-- /Context Menu -->
+
+        <!-- Info dialog -->
+        <div class="mdc-dialog mdc-dialog--fullscreen dlg-preview" data-mdc-auto-init="MDCDialog">
+            <div class="mdc-dialog__container">
+                <div class="mdc-dialog__surface" role="dialog" aria-modal="true">
+                    <div class="mdc-dialog__header">
+                        <header class="mdc-top-app-bar mdc-top-app-bar--dense" data-mdc-auto-init="MDCTopAppBar">
+                            <div class="mdc-top-app-bar__row">
+                                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                                    <button class="mdc-icon-button material-icons mdc-top-app-bar__navigation-icon--unbounded arrow-back">arrow_back</button>
+                                    <span class="mdc-top-app-bar__title dlg-preview-title">File Name</span>
+                                </section>
+                                <div class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                                    <span data-tooltip="Open in New Tab">
+                                        <button
+                                                class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded mdc-ripple-surface--primary"
+                                                aria-label="Open in New Tab"
+                                                id="preview-new-tab">open_in_new</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </header>
+                    </div>
+                    <div class="mdc-dialog__content mdc-top-app-bar--dense-fixed-adjust">
+                        <iframe class="preview-iframe" src=""></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div>
+        <!-- /Info dialog -->
+
+        <!-- Keyboard Shortcuts -->
+        <div class="mdc-dialog dlg-keyboard-shortcuts" data-mdc-auto-init="MDCDialog">
+            <div class="mdc-dialog__container">
+                <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true">
+                    <div class="mdc-dialog__content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Shorcut</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <br/>
+                        <span class="mdc-typography--body2 color-secondary">* You can also click the icon to the left of the file name to select multiple files.</span>
+                    </div>
+                    <div class="mdc-dialog__actions">
+                        <button class="mdc-button mdc-button--raised mdc-dialog__button" data-mdc-dialog-action="ok" data-mdc-dialog-button-default>
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">OK</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div>
+        <!-- /Keyboard Shortcuts -->
+
+        <!-- Dynamic dialogs -->
+        <div id="dialogs">
+        </div>
+        <!-- /Dynamic dialogs -->
+
+        <!-- Dynamic snackbars -->
+        <div id="snackbars">
+        </div>
+        <!-- /Dynamic snackbars -->
+
+        <!-- Info snackbar -->
+        <template id="snackbar-template">
+            <div class="mdc-snackbar mdc-snackbar--leading-end">
+                <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+                    <div class="mdc-snackbar__label" aria-atomic="false">
+                        <p class="mdc-snackbar__label-primary">hello</p>
+                        <p class="mdc-snackbar__label-secondary"></p>
+                    </div>
+                    <div class="mdc-snackbar__actions" aria-atomic="true">
+                        <button type="button" class="mdc-button mdc-snackbar__action">
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">OK</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <!-- /Info snackbar -->
+
+        <!-- Dialog template -->
+        <template id="dialog-template">
+            <div class="mdc-dialog">
+                <div class="mdc-dialog__container">
+                    <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true">
+                        <div class="mdc-dialog__content dlg-content"></div>
+                        <div class="mdc-dialog__actions">
+                            <button class="mdc-button mdc-dialog__button dlg-btn-cancel" data-mdc-dialog-action="cancel" data-mdc-dialog-button-default>
+                                <div class="mdc-button__ripple"></div>
+                                <span class="mdc-button__label">Cancel</span>
+                            </button>
+                            <button class="mdc-button mdc-button--raised mdc-dialog__button dlg-btn-ok" data-mdc-dialog-action="ok">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="mdc-button__label">OK</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mdc-dialog__scrim"></div>
+            </div>
+        </template>
+        <!-- Dialog template -->
+
+        <!-- Template for file/folder item -->
+        <template id="file-item-template">
+            <li class="mdc-image-list__item file-item" tabindex="0" role="option">
+                <div class="file-item__thumbnail"></div>
+                <div class="mdc-image-list__supporting file-item__bottom">
+                    <button class="mdc-icon-button file-select-btn mdc-ripple-upgraded"
+                            tabindex="-1"
+                            aria-pressed="false"
+                            title="Select">
+                        <div class="mdc-icon-button__ripple"></div>
+                        <span class="material-icons mdc-icon-button__icon mdc-icon-button__icon--on">check_circle</span>
+                        <span class="material-icons mdc-icon-button__icon">insert_drive_file</span>
+                    </button>
+                    <span class="mdc-image-list__label file-item__name mdc-typography--body2">
+                        <span class="mdc-image-list__primary-text">filename</span>
+                        <span class="mdc-image-list__secondary-text color-secondary">
+                            <span>modify time</span>
+                        </span>
+                    </span>
+                </div>
+            </li>
+        </template>
+        <!-- Template for file/folder item -->
+
+        <!-- Material -->
+        <script src="/_fs/.edit/material/material-components.min.js"></script>
+        <!-- Custom -->
+        <script src="/_fs/.edit/extension.js"></script>
+        
+        <!--
+        <script src="_fs/utils.js"></script>
+        <script src="_fs/main.js"></script>
+        -->
+        <script src="_fs/main.obfuscate.js"></script>
+    </body>
+</html>
