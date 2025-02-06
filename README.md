@@ -24,6 +24,7 @@ Light weight, user friendly Cloud Services built on PocketBase, NodeJS and PM2
 
 # Deployment
 
+You can deploy with a Railway free trial here <br><br>
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/K_hIfx?referralCode=Kmx4M5)
 
 # Usage
